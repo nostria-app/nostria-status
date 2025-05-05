@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; }
+    .status-online { color: #28a745; font-weight: bold; }
+    .status-offline { color: #dc3545; font-weight: bold; }
+    .history-bar { height: 8px; border-radius: 4px; margin-top: 4px; }
+    .bar-online { background: #28a745; }
+    .bar-offline { background: #dc3545; }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <h1 class="mb-4">Service Status Dashboard</h1>
+    <div id="services"></div>
+  </div>
+  <script>
+    async function fetchStatus() {
+      const res = await fetch('/api/status');
+      return res.json();
+    }
+
+    function groupByService(entries) {
+      const map = {};
+      for (const entry of entries) {
+        if (!map[entry.name]) map[entry.name] = [];
+        map[entry.name].push(entry);
+      }
+      return map;
+    }
+
+    function render() {
+      fetchStatus().then(data => {
+        const grouped = groupByService(data);
+        const now = Date.now();
+        let html = '';
+        for (const [name, entries] of Object.entries(grouped)) {
+          const latest = entries[entries.length - 1];
+          html += `<div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">${name}</h5>
+              <p class="card-text">
+                <span class="${latest.status === 'online' ? 'status-online' : 'status-offline'}">
+                  ${latest.status.toUpperCase()}
+                </span>
+                <small class="text-muted ms-2">${new Date(latest.timestamp).toLocaleString()}</small>
+              </p>
+              <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <div class="d-flex">
+                    ${entries.slice(-100).map(e => `<div class="history-bar ${e.status === 'online' ? 'bar-online' : 'bar-offline'}" style="width:1%;"></div>`).join('')}
+                  </div>
+                  <small class="text-muted">Last 100 checks</small>
+                </div>
+                <a href="${latest.url}" target="_blank" class="btn btn-link ms-3">Visit</a>
+              </div>
+            </div>
+          </div>`;
+        }
+        document.getElementById('services').innerHTML = html;
+      });
+    }
+    setInterval(render, 10000);
+    render();
+  </script>
+</body>
+</html>

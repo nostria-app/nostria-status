@@ -1,0 +1,9 @@
+{
+  "services": [
+    {
+      "name": "Example Service",
+      "url": "https://example.com/health"
+    }
+    // Add more services as needed
+  ]
+}

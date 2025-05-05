@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
-const config = require('../config');
-const statusDb = require('../db/statusDb');
+import fetch from 'node-fetch';
+import config from '../config.js';
+import * as statusDb from '../db/statusDb.js';
 
 /**
  * Monitoring Service
@@ -187,4 +187,17 @@ class MonitoringService {
     }
 }
 
-module.exports = new MonitoringService();
+// Create instance and export its methods
+const monitoringService = new MonitoringService();
+
+// Export all methods individually for ESM compatibility
+export const init = monitoringService.init.bind(monitoringService);
+export const startMonitoring = monitoringService.startMonitoring.bind(monitoringService);
+export const stopMonitoring = monitoringService.stopMonitoring.bind(monitoringService);
+export const checkAllServices = monitoringService.checkAllServices.bind(monitoringService);
+export const checkService = monitoringService.checkService.bind(monitoringService);
+export const getLatestStatus = monitoringService.getLatestStatus.bind(monitoringService);
+export const getServiceHistory = monitoringService.getServiceHistory.bind(monitoringService);
+export const getAllHistory = monitoringService.getAllHistory.bind(monitoringService);
+export const calculateUptime = monitoringService.calculateUptime.bind(monitoringService);
+export const calculateAllUptime = monitoringService.calculateAllUptime.bind(monitoringService);

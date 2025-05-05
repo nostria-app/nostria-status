@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import * as monitoringService from '../services/monitoringService.js';
+
 const router = express.Router();
-const monitoringService = require('../services/monitoringService');
 
 /**
  * Get latest status for all services
@@ -72,4 +73,4 @@ router.post('/check', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

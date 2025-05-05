@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import * as monitoringService from '../services/monitoringService.js';
+import config from '../config.js';
+
 const router = express.Router();
-const monitoringService = require('../services/monitoringService');
-const config = require('../config');
 
 /**
  * Serve the main dashboard page
@@ -72,4 +73,4 @@ router.get('/service/:name', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

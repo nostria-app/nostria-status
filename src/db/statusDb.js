@@ -1,7 +1,12 @@
-const { JsonlDB } = require('@alcalzone/jsonl-db');
-const path = require('path');
-const fs = require('fs');
-const config = require('../config');
+import { JsonlDB } from "@alcalzone/jsonl-db";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import config from '../config.js';
+
+// Get __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Ensure DB directory exists
 const dbDir = path.join(__dirname, 'data');
@@ -10,7 +15,8 @@ if (!fs.existsSync(dbDir)) {
 }
 
 // Create database instance
-const db = new JsonlDB(path.join(dbDir, 'status.jsonl'));
+const db = new JsonlDB(path.join(dbDir, 'db.jsonl'));
+await db.open();
 
 /**
  * Status Database Service
@@ -43,11 +49,7 @@ class StatusDb {
         const timestamp = new Date().toISOString();
         const id = `${record.service}_${timestamp}`;
         
-        this.db.add({
-            ...record,
-            id,
-            timestamp
-        });
+        this.db.set(id, record);
         
         return id;
     }
@@ -63,9 +65,8 @@ class StatusDb {
         cutoffDate.setDate(cutoffDate.getDate() - days);
         
         const records = [];
-        const allRecords = this.db.read();
         
-        for (const record of allRecords) {
+        for (const [_, record] of this.db.entries()) {
             if (record.service === serviceName && 
                 new Date(record.timestamp) >= cutoffDate) {
                 records.push(record);
@@ -87,9 +88,7 @@ class StatusDb {
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - days);
         
-        const allRecords = this.db.read();
-        
-        for (const record of allRecords) {
+        for (const [_, record] of this.db.entries()) {
             if (new Date(record.timestamp) >= cutoffDate) {
                 if (!services[record.service]) {
                     services[record.service] = [];
@@ -114,9 +113,8 @@ class StatusDb {
      */
     async getLatestStatus() {
         const services = {};
-        const allRecords = this.db.read();
         
-        for (const record of allRecords) {
+        for (const [_, record] of this.db.entries()) {
             const serviceName = record.service;
             
             if (!services[serviceName] || 
@@ -135,27 +133,30 @@ class StatusDb {
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - config.dataRetentionDays);
         
-        let purgingNeeded = false;
-        const newRecords = [];
-        const allRecords = this.db.read();
+        const keysToDelete = [];
         
-        for (const record of allRecords) {
-            if (new Date(record.timestamp) >= cutoffDate) {
-                newRecords.push(record);
-            } else {
-                purgingNeeded = true;
+        for (const [key, record] of this.db.entries()) {
+            if (new Date(record.timestamp) < cutoffDate) {
+                keysToDelete.push(key);
             }
         }
         
-        if (purgingNeeded) {
-            // Clear the database and add back only the records we want to keep
-            this.db.clear();
-            for (const record of newRecords) {
-                this.db.add(record);
+        if (keysToDelete.length > 0) {
+            for (const key of keysToDelete) {
+                this.db.delete(key);
             }
-            console.log(`Purged records older than ${config.dataRetentionDays} days`);
+            console.log(`Purged ${keysToDelete.length} records older than ${config.dataRetentionDays} days`);
         }
     }
 }
 
-module.exports = new StatusDb();
+// Create instance
+const statusDbInstance = new StatusDb();
+
+// Export methods individually for ESM compatibility
+export const init = statusDbInstance.init.bind(statusDbInstance);
+export const addRecord = statusDbInstance.addRecord.bind(statusDbInstance);
+export const getServiceRecords = statusDbInstance.getServiceRecords.bind(statusDbInstance);
+export const getAllRecords = statusDbInstance.getAllRecords.bind(statusDbInstance);
+export const getLatestStatus = statusDbInstance.getLatestStatus.bind(statusDbInstance);
+export const purgeOldRecords = statusDbInstance.purgeOldRecords.bind(statusDbInstance);

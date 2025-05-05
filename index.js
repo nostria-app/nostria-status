@@ -1,10 +1,15 @@
-const express = require('express');
-const path = require('path');
-const ejsLayouts = require('express-ejs-layouts');
-const config = require('./src/config');
-const apiRoutes = require('./src/routes/api');
-const indexRoutes = require('./src/routes/index');
-const monitoringService = require('./src/services/monitoringService');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import ejsLayouts from 'express-ejs-layouts';
+import config from './src/config.js';
+import apiRoutes from './src/routes/api.js';
+import indexRoutes from './src/routes/index.js';
+import * as monitoringService from './src/services/monitoringService.js';
+
+// Get __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create Express app
 const app = express();

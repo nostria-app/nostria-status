@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nostria Service Status</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>Nostria Service Status</h1>
+        <p>Monitoring the health of our services.</p>
+        <div id="last-updated">Last updated: Never</div>
+    </header>
+
+    <main id="status-container">
+        <!-- Status cards will be loaded here -->
+        <p>Loading service statuses...</p>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Nostria. Auto-refreshing.</p>
+    </footer>
+
+    <script>
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                updateStatusCards(data);
+                document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                console.error("Failed to fetch status:", error);
+                document.getElementById('status-container').innerHTML = '<p class="error">Failed to load service statuses. Please try again later.</p>';
+            }
+        }
+
+        function updateStatusCards(data) {
+            const container = document.getElementById('status-container');
+            container.innerHTML = ''; // Clear previous content
+
+            if (Object.keys(data).length === 0) {
+                container.innerHTML = '<p>No services configured or data available yet.</p>';
+                return;
+            }
+
+            for (const url in data) {
+                const service = data[url];
+                const card = document.createElement('div');
+                card.className = `service-card status-${service.currentStatus || 'unknown'}`;
+
+                let historyHtml = '<div class="history-bar">';
+                if (service.history && service.history.length > 0) {
+                    // Display last N checks as blocks
+                    const maxBlocks = 30;
+                    const recentHistory = service.history.slice(-maxBlocks);
+                    recentHistory.forEach(check => {
+                        const title = `${new Date(check.timestamp).toLocaleString()}\nStatus: ${check.status}\nCode: ${check.statusCode}\nTime: ${check.responseTime}ms`;
+                        historyHtml += `<span class="history-block status-${check.status}" title="${title}"></span>`;
+                    });
+                } else {
+                    historyHtml += '<span>No history available</span>';
+                }
+                historyHtml += '</div>';
+
+                card.innerHTML = `
+                    <h2>${url}</h2>
+                    <p class="current-status">Status: <span class="status-text">${service.currentStatus || 'Unknown'}</span></p>
+                    <p class="details">Last check: ${service.lastCheckTimestamp ? new Date(service.lastCheckTimestamp).toLocaleString() : 'N/A'}</p>
+                    <p class="details">Response Time: ${service.responseTime !== null ? service.responseTime + 'ms' : 'N/A'}</p>
+                    <p class="details">Status Code: ${service.statusCode !== null ? service.statusCode : 'N/A'}</p>
+                    <h3>Recent History (Last ${service.history?.length || 0} checks):</h3>
+                    ${historyHtml}
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        // Initial fetch
+        fetchStatus();
+
+        // Refresh every 60 seconds
+        setInterval(fetchStatus, 60000);
+    </script>
+</body>
+</html>

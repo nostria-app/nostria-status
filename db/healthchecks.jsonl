@@ -1,0 +1,3 @@
+{"k":{"url":"https://google.com","timestamp":1746475056712,"status":"offline","responseTime":0,"statusCode":"fetch is not a function"}}
+{"k":{"url":"https://github.com","timestamp":1746475056712,"status":"offline","responseTime":0,"statusCode":"fetch is not a function"}}
+{"k":{"url":"https://example.com/nonexistent","timestamp":1746475056713,"status":"offline","responseTime":0,"statusCode":"fetch is not a function"}}

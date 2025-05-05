@@ -1,0 +1,19 @@
+{
+  "name": "nostria-status",
+  "version": "1.0.0",
+  "description": "Status dashboard for service monitoring",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nostria-app/nostria-status.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nostria-app/nostria-status/issues"
+  },
+  "homepage": "https://github.com/nostria-app/nostria-status#readme"
+}

@@ -1,0 +1,26 @@
+<!-- Error Page -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-5 text-center">
+                    <i class="fas fa-exclamation-triangle text-warning fa-4x mb-4"></i>
+                    <h1 class="mb-4"><%= message %></h1>
+                    <% if (error && error.status) { %>
+                        <h2 class="text-muted mb-4"><%= error.status %></h2>
+                    <% } %>
+                    
+                    <% if (error && error.stack && process.env.NODE_ENV === 'development') { %>
+                        <div class="alert alert-danger mt-4">
+                            <pre class="mb-0 text-start"><%= error.stack %></pre>
+                        </div>
+                    <% } %>
+                    
+                    <a href="/" class="btn btn-primary mt-4">
+                        <i class="fas fa-home me-2"></i> Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

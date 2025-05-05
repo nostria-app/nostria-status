@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  status-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nostria-status
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/usr/src/app/src/db/data
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000

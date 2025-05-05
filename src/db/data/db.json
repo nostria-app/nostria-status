@@ -1,4 +1,0 @@
-{"k":"Google_2025-05-05T22:00:08.990Z","v":{"service":"Google","url":"https://www.google.com","status":"online","statusCode":200,"responseTime":183,"message":"Service is online"}}
-{"k":"Example API_2025-05-05T22:00:09.077Z","v":{"service":"Example API","url":"https://jsonplaceholder.typicode.com/posts","status":"online","statusCode":200,"responseTime":87,"message":"Service is online"}}
-{"k":"Google_2025-05-05T22:00:43.621Z","v":{"service":"Google","url":"https://www.google.com","status":"online","statusCode":200,"responseTime":183,"message":"Service is online"}}
-{"k":"Example API_2025-05-05T22:00:43.699Z","v":{"service":"Example API","url":"https://jsonplaceholder.typicode.com/posts","status":"online","statusCode":200,"responseTime":78,"message":"Service is online"}}

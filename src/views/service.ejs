@@ -140,7 +140,7 @@
                     <tbody>
                         <% if (history && history.length > 0) { %>
                             <% history.forEach(function(item) { %>
-                                <tr>
+                                <tr class="history-table-row">
                                     <td><%= new Date(item.timestamp).toLocaleString() %></td>
                                     <td>
                                         <% if (item.status === 'online') { %>

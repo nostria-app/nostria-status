@@ -11,18 +11,6 @@ const config = {
   // Services to monitor
   services: [
     {
-      name: "Google",
-      url: "https://www.google.com",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
-      name: "Example API",
-      url: "https://jsonplaceholder.typicode.com/posts",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
       name: "Nostria App",
       url: "https://nostria.app",
       method: "GET",
@@ -42,7 +30,7 @@ const config = {
     },
     {
       name: "Nostria Metadata",
-      url: "https://metadata.nostria.app",
+      url: "https://metadata.nostria.app/p/17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515",
       method: "GET",
       expectedStatus: 200,
     },

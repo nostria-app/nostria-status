@@ -67,11 +67,28 @@ class StatusDb {
         const records = [];
         
         for (const [_, record] of this.db.entries()) {
-            if (record.service === serviceName && 
-                new Date(record.timestamp) >= cutoffDate) {
-                records.push(record);
+            // Make sure we're checking the timestamp properly
+            if (record.service === serviceName) {
+                // Add timestamp if it doesn't exist
+                if (!record.timestamp) {
+                    // Extract timestamp from the key if possible
+                    const keyParts = _.split('_');
+                    if (keyParts.length > 1) {
+                        record.timestamp = keyParts[keyParts.length - 1];
+                    } else {
+                        // Default to current time if can't extract
+                        record.timestamp = new Date().toISOString();
+                    }
+                }
+                
+                // Only add records within date range
+                if (new Date(record.timestamp) >= cutoffDate) {
+                    records.push(record);
+                }
             }
         }
+        
+        console.log(`Retrieved ${records.length} records for service ${serviceName} in the last ${days} days`);
         
         // Sort by timestamp, newest first
         return records.sort((a, b) => 

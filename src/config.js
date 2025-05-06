@@ -39,7 +39,7 @@ const config = {
   // Database path - use environment variable or default to '/home/data'
   dbPath: process.env.DB_PATH || '/home/data',
 
-  // Check interval in milliseconds (default: 1 minute)
+  // Check interval in milliseconds (default: 10 minute)
   checkInterval: parseInt(process.env.CHECK_INTERVAL_MS) || 10 * 60 * 1000,
 
   // Data retention period in days (default: 7 days)

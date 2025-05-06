@@ -17,7 +17,7 @@ if (!fs.existsSync(dbDir)) {
 }
 
 // Create database instance
-const db = new JsonlDB(path.join(dbDir, 'db.jsonl'));
+const db = new JsonlDB(path.join(dbDir, 'status.jsonl'));
 await db.open();
 
 /**

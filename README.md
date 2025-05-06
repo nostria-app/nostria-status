@@ -61,8 +61,11 @@ module.exports = {
     // Add more services...
   ],
   
-  // Check interval in milliseconds (default: 1 minute)
-  checkInterval: 60 * 1000,
+  // Database path - use environment variable or default to '/home/data'
+  dbPath: '/home/data',
+  
+  // Check interval in milliseconds (default: 10 minute)
+  checkInterval: 10 * 60 * 1000,
   
   // Data retention period in days (default: 7 days)
   dataRetentionDays: 7,

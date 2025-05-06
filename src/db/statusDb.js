@@ -5,11 +5,13 @@ import fs from 'fs';
 import config from '../config.js';
 
 // Get __dirname equivalent in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// Get database directory from config or use default
+const dbDir = config.dbPath || '/home/data';
 
 // Ensure DB directory exists
-const dbDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });
 }

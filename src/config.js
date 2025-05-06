@@ -35,6 +35,9 @@ const config = {
       expectedStatus: 200,
     },
   ],
+  
+  // Database path - use environment variable or default to '/home/data'
+  dbPath: process.env.DB_PATH || '/home/data',
 
   // Check interval in milliseconds (default: 1 minute)
   checkInterval: parseInt(process.env.CHECK_INTERVAL_MS) || 10 * 60 * 1000,

@@ -97,7 +97,7 @@ const config = {
   checkInterval: parseInt(process.env.CHECK_INTERVAL_MS) || 10 * 60 * 1000,
 
   // Data retention period in days (default: 7 days)
-  dataRetentionDays: parseInt(process.env.DATA_RETENTION_DAYS) || 7,
+  dataRetentionDays: parseInt(process.env.DATA_RETENTION_DAYS) || 14,
 
   // Port for the web server
   port: parseInt(process.env.PORT) || 3000,

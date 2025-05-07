@@ -23,17 +23,71 @@ const config = {
       expectedStatus: 200,
     },
     {
-      name: "Discovery Relay",
-      url: "https://discovery.nostria.app",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
       name: "Nostria Metadata",
       url: "https://metadata.nostria.app/p/17e2889fba01021d048a13fd0ba108ad31c38326295460c21e69c43fa8fbe515",
       method: "GET",
       expectedStatus: 200,
     },
+    {
+      name: "Discovery Relay (EU)",
+      url: "https://discovery-eu.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "Discovery Relay (AF)",
+      url: "https://discovery-af.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "User Relay Ribo (EU)",
+      url: "https://ribo-eu.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "User Relay Rilo (EU)",
+      url: "https://rilo-eu.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "User Relay Rifu (EU)",
+      url: "https://rifu-eu.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "Media Server Mibo (EU)",
+      url: "https://mibo-eu.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "Media Server Milo (EU)",
+      url: "https://milo-eu.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "User Relay Ribo (AF)",
+      url: "https://ribo-af.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "Media Server Mibo (AF)",
+      url: "https://mibo-af.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    // {
+    //   name: "Media Server Mifu (EU)",
+    //   url: "https://relay-mifu-eu.nostria.app",
+    //   method: "GET",
+    //   expectedStatus: 200,
+    // },
   ],
   
   // Database path - use environment variable or default to '/home/data'

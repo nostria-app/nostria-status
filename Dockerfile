@@ -18,5 +18,7 @@ RUN mkdir -p src/db/data && chmod -R 755 src/db/data
 # Expose port that the app will run on
 EXPOSE 3000
 
+VOLUME [ "/data" ]
+
 # Command to run the app
 CMD ["node", "index.js"]

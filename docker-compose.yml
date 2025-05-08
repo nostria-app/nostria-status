@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/usr/src/app/src/db/data
+      - /home/data:/usr/src/app/src/db/data
     restart: unless-stopped
     environment:
       - NODE_ENV=production

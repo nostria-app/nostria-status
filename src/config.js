@@ -91,7 +91,7 @@ const config = {
   ],
   
   // Database path - use environment variable or default to '/home/data'
-  dbPath: process.env.DB_PATH || '/home/data',
+  dbPath: process.env.DB_PATH || './data',
 
   // Check interval in milliseconds (default: 10 minute)
   checkInterval: parseInt(process.env.CHECK_INTERVAL_MS) || 10 * 60 * 1000,

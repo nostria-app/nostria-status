@@ -62,7 +62,7 @@ module.exports = {
   ],
   
   // Database path - use environment variable or default to '/home/data'
-  dbPath: '/home/data',
+  dbPath: './data',
   
   // Check interval in milliseconds (default: 10 minute)
   checkInterval: 10 * 60 * 1000,

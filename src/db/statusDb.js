@@ -9,7 +9,7 @@ import config from '../config.js';
 // const __dirname = path.dirname(__filename);
 
 // Get database directory from config or use default
-const dbDir = config.dbPath || '/home/data';
+const dbDir = config.dbPath || './data';
 
 // Ensure DB directory exists
 if (!fs.existsSync(dbDir)) {

@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
 # Create app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -13,12 +13,12 @@ RUN npm install
 COPY . .
 
 # Create data directory for jsonl-db
-RUN mkdir -p src/db/data && chmod -R 755 src/db/data
+RUN mkdir -p data && chmod -R 755 data
 
 # Expose port that the app will run on
 EXPOSE 3000
 
-VOLUME [ "/data" ]
+VOLUME [ "/app/data" ]
 
 # Command to run the app
 CMD ["node", "index.js"]

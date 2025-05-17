@@ -28,6 +28,12 @@ const config = {
       method: "GET",
       expectedStatus: 200,
     },
+        {
+      name: "Nostria Notification",
+      url: "https://notification.nostria.app/api/status/health",
+      method: "GET",
+      expectedStatus: 200,
+    },
     {
       name: "Nostria Find",
       url: "https://find.nostria.app/p/npub1zl3g38a6qypp6py2z07shggg45cu8qex992xpss7d8zrl28mu52s4cjajh",

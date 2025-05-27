@@ -28,7 +28,7 @@ const config = {
       method: "GET",
       expectedStatus: 200,
     },
-        {
+    {
       name: "Nostria Notification",
       url: "https://notification.nostria.app/api/status/health",
       method: "GET",
@@ -91,6 +91,18 @@ const config = {
     {
       name: "Media Server Mibo (AF)",
       url: "https://mibo.af.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "Payment",
+      url: "https://pay.ariton.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "Service",
+      url: "https://service.ariton.app",
       method: "GET",
       expectedStatus: 200,
     },

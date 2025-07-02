@@ -52,6 +52,9 @@
                         
                         const serviceUptime = uptime[service.name] ? uptime[service.name].uptime.toFixed(2) : 0;
                     %>
+
+
+
                     <div class="status-badge <%= statusClass %>"></div>
                     <div class="card-body pt-4">
                         <div class="d-flex align-items-center mb-3">
@@ -64,7 +67,7 @@
                                         <%= service.name %>
                                     </a>
                                 </h5>
-                                <p class="text-muted mb-0"><%= statusText %></p>
+                                <p class="text-muted mb-0"><%= statusText %> <small><a href="<%= service.url %>" target="_blank" rel="noopener noreferrer" class="text-muted">Link <i class="fas fa-external-link-alt fa-xs"></i></a></small></p>
                             </div>
                         </div>
                         
@@ -80,8 +83,8 @@
                         
                         <% if (serviceStatus) { %>
                             <div class="mt-3 pt-3 border-top">
-                                <p class="text-muted mb-1">
-                                    <small>Last check: <%= new Date(serviceStatus.timestamp).toLocaleString() %></small>
+                                  <p class="text-muted mb-1">
+                                    <small>Last check: <%= serviceStatus.timestamp %></small>
                                 </p>
                                 <% if (serviceStatus.responseTime) { %>
                                     <p class="text-muted mb-0">

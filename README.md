@@ -1,4 +1,4 @@
-# Nostria Status
+# Nostria Services Status
 
 A beautiful and modern status monitoring application that tracks and displays the health of your services.
 

@@ -114,7 +114,7 @@ const config = {
     },
     {
       name: "Payment",
-      url: "https://pay.ariton.app",
+      url: "https://pay.ariton.app/status",
       method: "GET",
       expectedStatus: 200,
     },

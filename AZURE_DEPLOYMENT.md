@@ -62,13 +62,14 @@ az webapp config appsettings set \
     PORT=3000 \
     WEBSITES_ENABLE_APP_SERVICE_STORAGE=true \
     WEBSITES_CONTAINER_START_TIME_LIMIT=1800 \
-    WEBSITE_HEALTHCHECK_MAXPINGFAILURES=10
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES=10 \
+    WEBSITE_HEALTHCHECK_MAXUNHEALTHYWORKERPERCENT=100
 
-# Configure health check
+# Configure general settings
 az webapp config set \
   --resource-group <your-rg> \
   --name <your-app-name> \
-  --health-check-path "/health"
+  --always-on true
 
 # Configure container
 az webapp config container set \
@@ -77,6 +78,20 @@ az webapp config container set \
   --docker-custom-image-name ghcr.io/nostria-app/nostria-status:latest \
   --docker-registry-server-url https://ghcr.io
 ```
+
+**Note**: Health check path configuration requires manual setup in Azure Portal as the CLI doesn't support this parameter directly.
+
+## Manual Health Check Configuration
+
+Since Azure CLI doesn't support `--health-check-path` parameter, configure it manually:
+
+1. Go to Azure Portal
+2. Navigate to your Web App
+3. Go to "Health check" in the left menu
+4. Enable health check
+5. Set Health check path: `/health`
+6. Set Unhealthy threshold: `10`
+7. Save the configuration
 
 ## Required GitHub Secrets
 

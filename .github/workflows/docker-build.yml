@@ -75,14 +75,15 @@ jobs:
               PORT=3000 \
               WEBSITES_ENABLE_APP_SERVICE_STORAGE=true \
               WEBSITES_CONTAINER_START_TIME_LIMIT=1800 \
-              WEBSITE_HEALTHCHECK_MAXPINGFAILURES=10
+              WEBSITE_HEALTHCHECK_MAXPINGFAILURES=10 \
+              WEBSITE_HEALTHCHECK_MAXUNHEALTHYWORKERPERCENT=100
           
-          # Configure health check path
+          # Configure general settings including always-on
           az webapp config set \
             --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --startup-file "" \
-            --health-check-path "/health"
+            --always-on true \
+            --startup-file ""
           
           # Configure container settings for reliability
           az webapp config container set \
@@ -92,6 +93,16 @@ jobs:
             --docker-registry-server-url https://${{ env.REGISTRY }} \
             --docker-registry-server-user ${{ github.actor }} \
             --docker-registry-server-password ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Health Check (Manual step required)
+        run: |
+          echo "⚠️  Health check configuration requires manual setup in Azure Portal:"
+          echo "1. Go to Azure Portal > ${{ env.AZURE_WEBAPP_NAME }} > Health check"
+          echo "2. Enable health check"  
+          echo "3. Set Health check path: /health"
+          echo "4. Set Unhealthy threshold: 10 requests"
+          echo ""
+          echo "Alternatively, you can configure it via Azure Portal after deployment."
 
       - name: Wait for deployment and verify health
         run: |

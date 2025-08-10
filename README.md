@@ -96,7 +96,19 @@ For Azure Web Apps deployment using GitHub Actions:
    - Includes health checks and reliability features
 
 3. **Manual Azure Setup:**
-   See [AZURE_DEPLOYMENT.md](AZURE_DEPLOYMENT.md) for detailed configuration.
+   
+   **Using Configuration Scripts:**
+   ```bash
+   # Windows PowerShell
+   .\configure-azure.ps1 -ResourceGroupName "your-rg" -WebAppName "your-app"
+   
+   # Linux/macOS
+   chmod +x configure-azure.sh
+   ./configure-azure.sh -g "your-rg" -n "your-app"
+   ```
+   
+   **Detailed Setup:**
+   See [AZURE_DEPLOYMENT.md](AZURE_DEPLOYMENT.md) for manual configuration steps.
 
 ## Health Monitoring
 

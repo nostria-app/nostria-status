@@ -35,12 +35,21 @@ class StatusDb {
      * Initialize the database
      */
     async init() {
-        console.log('Status database initialized');
-        
-        // Initial purge of old records
-        await this.purgeOldRecords();
-        
-        return this;
+        try {
+            console.log('Initializing status database...');
+            
+            // Test database connection
+            await this.db.clear(); // This will throw if DB is not accessible
+            
+            // Initial purge of old records
+            await this.purgeOldRecords();
+            
+            console.log('Status database initialized successfully');
+            return this;
+        } catch (error) {
+            console.error('Failed to initialize database:', error);
+            throw new Error(`Database initialization failed: ${error.message}`);
+        }
     }
 
     /**
@@ -48,12 +57,31 @@ class StatusDb {
      * @param {Object} record - Status check record
      */
     async addRecord(record) {
-        const timestamp = new Date().toISOString();
-        const id = `${record.service}_${timestamp}`;
-        
-        this.db.set(id, record);
-        
-        return id;
+        try {
+            if (!record || !record.service) {
+                throw new Error('Invalid record: missing service name');
+            }
+
+            const timestamp = record.timestamp || new Date().toISOString();
+            const id = `${record.service}_${timestamp}`;
+            
+            // Ensure record has all required fields
+            const completeRecord = {
+                service: record.service,
+                url: record.url || '',
+                status: record.status || 'unknown',
+                statusCode: record.statusCode || 0,
+                responseTime: record.responseTime || 0,
+                message: record.message || '',
+                timestamp: timestamp
+            };
+            
+            await this.db.set(id, completeRecord);
+            return id;
+        } catch (error) {
+            console.error('Failed to add record to database:', error);
+            throw new Error(`Database write failed: ${error.message}`);
+        }
     }
 
     /**

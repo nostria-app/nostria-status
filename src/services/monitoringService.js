@@ -9,19 +9,43 @@ import * as statusDb from '../db/statusDb.js';
 class MonitoringService {
     constructor() {
         this.checkInterval = null;
+        this.isInitialized = false;
+        this.consecutiveErrors = 0;
+        this.maxConsecutiveErrors = 5;
     }
 
     /**
      * Initialize the monitoring service
      */
     async init() {
-        // Initialize the database
-        await statusDb.init();
-        
-        // Start the health check interval
-        this.startMonitoring();
-        
-        return this;
+        try {
+            console.log('Initializing monitoring service...');
+            
+            // Initialize the database with retry logic
+            let retries = 3;
+            while (retries > 0) {
+                try {
+                    await statusDb.init();
+                    break;
+                } catch (error) {
+                    retries--;
+                    console.error(`Database init failed (${3 - retries}/3):`, error.message);
+                    if (retries === 0) throw error;
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+            
+            // Start the health check interval
+            this.startMonitoring();
+            this.isInitialized = true;
+            
+            console.log('Monitoring service initialized successfully');
+            return this;
+        } catch (error) {
+            console.error('Failed to initialize monitoring service:', error);
+            this.isInitialized = false;
+            throw error;
+        }
     }
 
     /**
@@ -32,15 +56,44 @@ class MonitoringService {
             clearInterval(this.checkInterval);
         }
         
-        // Perform an initial check immediately
-        this.checkAllServices();
+        // Perform an initial check immediately (with delay to allow startup)
+        setTimeout(() => {
+            this.checkAllServices();
+        }, 5000);
         
         // Set up the interval for regular checks
         this.checkInterval = setInterval(() => {
-            this.checkAllServices();
+            this.checkAllServicesWithErrorHandling();
         }, config.checkInterval);
         
         console.log(`Monitoring started, checking ${config.services.length} services every ${config.checkInterval / 1000} seconds`);
+    }
+
+    /**
+     * Wrapper for checkAllServices with error handling
+     */
+    async checkAllServicesWithErrorHandling() {
+        try {
+            await this.checkAllServices();
+            this.consecutiveErrors = 0; // Reset error count on success
+        } catch (error) {
+            this.consecutiveErrors++;
+            console.error(`Monitoring cycle failed (${this.consecutiveErrors}/${this.maxConsecutiveErrors}):`, error.message);
+            
+            // If too many consecutive errors, restart monitoring
+            if (this.consecutiveErrors >= this.maxConsecutiveErrors) {
+                console.warn('Too many consecutive monitoring errors, restarting monitoring service...');
+                this.stopMonitoring();
+                setTimeout(() => {
+                    try {
+                        this.startMonitoring();
+                        this.consecutiveErrors = 0;
+                    } catch (restartError) {
+                        console.error('Failed to restart monitoring:', restartError);
+                    }
+                }, 10000); // Wait 10 seconds before restart
+            }
+        }
     }
 
     /**
@@ -58,12 +111,32 @@ class MonitoringService {
      * Check all configured services
      */
     async checkAllServices() {
-        for (const service of config.services) {
-            try {
-                await this.checkService(service);
-            } catch (error) {
-                console.error(`Error checking service ${service.name}:`, error);
-            }
+        if (!this.isInitialized) {
+            console.warn('Monitoring service not initialized, skipping check');
+            return;
+        }
+
+        const checkPromises = config.services.map(service => 
+            this.checkService(service).catch(error => {
+                console.error(`Error checking service ${service.name}:`, error.message);
+                return {
+                    service: service.name,
+                    url: service.url,
+                    status: 'error',
+                    statusCode: 0,
+                    responseTime: 0,
+                    message: `Check failed: ${error.message}`
+                };
+            })
+        );
+
+        try {
+            const results = await Promise.allSettled(checkPromises);
+            const successfulChecks = results.filter(result => result.status === 'fulfilled').length;
+            console.log(`Completed ${successfulChecks}/${config.services.length} service checks`);
+        } catch (error) {
+            console.error('Error in service check batch:', error);
+            throw error;
         }
     }
 
@@ -72,6 +145,10 @@ class MonitoringService {
      * @param {Object} service - Service configuration
      */
     async checkService(service) {
+        if (!service || !service.url) {
+            throw new Error('Invalid service configuration');
+        }
+
         const startTime = Date.now();
         let responseTime = 0;
         let status = 'error';
@@ -82,19 +159,30 @@ class MonitoringService {
             const controller = new AbortController();
             const timeout = setTimeout(() => {
                 controller.abort();
-            }, 10000); // 10 second timeout
+            }, 15000); // 15 second timeout (increased from 10)
             
             const response = await fetch(service.url, {
                 method: service.method || 'GET',
-                signal: controller.signal
+                signal: controller.signal,
+                headers: {
+                    'User-Agent': 'Nostria-Status-Monitor/1.0',
+                    'Accept': 'text/html,application/json,*/*'
+                },
+                // Disable following redirects for more accurate status checking
+                redirect: 'manual'
             });
             
             clearTimeout(timeout);
             responseTime = Date.now() - startTime;
             statusCode = response.status;
             
+            // Handle redirects as success
+            if (response.status >= 300 && response.status < 400) {
+                status = 'online';
+                message = `Service is online (redirected with ${response.status})`;
+            }
             // Check if response status matches the expected status
-            if (response.status === (service.expectedStatus || 200)) {
+            else if (response.status === (service.expectedStatus || 200)) {
                 status = 'online';
                 message = 'Service is online';
             } else {
@@ -103,10 +191,23 @@ class MonitoringService {
             }
         } catch (error) {
             responseTime = Date.now() - startTime;
-            status = 'offline';
-            message = error.name === 'AbortError' 
-                ? 'Service timed out' 
-                : `Error: ${error.message}`;
+            
+            if (error.name === 'AbortError') {
+                status = 'offline';
+                message = 'Service timed out';
+            } else if (error.code === 'ENOTFOUND') {
+                status = 'offline';
+                message = 'Service not found (DNS resolution failed)';
+            } else if (error.code === 'ECONNREFUSED') {
+                status = 'offline';
+                message = 'Connection refused';
+            } else if (error.code === 'ECONNRESET') {
+                status = 'offline';
+                message = 'Connection reset';
+            } else {
+                status = 'offline';
+                message = `Error: ${error.message}`;
+            }
         }
         
         // Create record
@@ -116,13 +217,19 @@ class MonitoringService {
             status,
             statusCode,
             responseTime,
-            message
+            message,
+            timestamp: new Date().toISOString()
         };
         
-        // Store in database
-        await statusDb.addRecord(record);
+        // Store in database with error handling
+        try {
+            await statusDb.addRecord(record);
+        } catch (dbError) {
+            console.error(`Failed to store record for ${service.name}:`, dbError.message);
+            // Don't throw here to avoid stopping other checks
+        }
         
-        console.log(`Checked ${service.name}: ${status} (${responseTime}ms)`);
+        console.log(`Checked ${service.name}: ${status} (${responseTime}ms) - ${message}`);
         
         return record;
     }

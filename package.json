@@ -6,6 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "start:prod": "pm2 start ecosystem.config.js --env production",
+    "stop": "pm2 stop nostria-status",
+    "restart": "pm2 restart nostria-status",
+    "logs": "pm2 logs nostria-status",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,7 +30,8 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-ejs-layouts": "^2.5.1",
-    "node-fetch": "^2.6.11"
+    "node-fetch": "^2.6.11",
+    "pm2": "^5.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

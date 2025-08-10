@@ -120,17 +120,38 @@ const config = {
     },
   ],
 
-  // Database path - use environment variable or default to '/home/data'
-  dbPath: process.env.DB_PATH || './data',
+  // Database path - use environment variable or default based on platform
+  dbPath: process.env.DB_PATH || (process.env.WEBSITES_ENABLE_APP_SERVICE_STORAGE ? '/home/data' : './data'),
 
   // Check interval in milliseconds (default: 10 minute)
-  checkInterval: parseInt(process.env.CHECK_INTERVAL_MS) || 10 * 60 * 1000,
+  // Reduce frequency in Azure to be more cost-effective
+  checkInterval: parseInt(process.env.CHECK_INTERVAL_MS) || (process.env.NODE_ENV === 'production' ? 15 * 60 * 1000 : 10 * 60 * 1000),
 
   // Data retention period in days (default: 7 days)
   dataRetentionDays: parseInt(process.env.DATA_RETENTION_DAYS) || 14,
 
   // Port for the web server
   port: parseInt(process.env.PORT) || 3000,
+
+  // Azure-specific configurations
+  azure: {
+    // Enable Azure-specific optimizations
+    isAzureWebApp: !!process.env.WEBSITES_ENABLE_APP_SERVICE_STORAGE,
+    
+    // Health check configuration
+    healthCheck: {
+      enabled: true,
+      path: '/health',
+      timeout: 10000, // 10 seconds
+    },
+    
+    // Logging configuration for Azure
+    logging: {
+      level: process.env.LOG_LEVEL || 'info',
+      enableConsole: true,
+      enableFile: !process.env.WEBSITES_ENABLE_APP_SERVICE_STORAGE, // Don't write to files in Azure
+    }
+  },
 };
 
 export default config;

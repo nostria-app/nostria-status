@@ -5,6 +5,17 @@ src/db/data/*
 *db.jsonl.lock
 *db.jsonl
 
+# PM2 runtime files
+.pm2/
+ecosystem.config.js.backup
+
+# Application logs
+logs/
+monitor.log
+
+# Azure deployment
+.azure/
+
 # Logs
 logs
 *.log

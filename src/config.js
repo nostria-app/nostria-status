@@ -42,25 +42,19 @@ const config = {
     },
     {
       name: "Discovery Relay (EU)",
-      url: "https://discovery.eu.nostria.app",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
-      name: "Discovery Relay (AF)",
-      url: "https://discovery.af.nostria.app",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
-      name: "Discovery Relay (US)",
-      url: "https://discovery.us.nostria.app",
+      url: "https://indexer.openresist.com",
       method: "GET",
       expectedStatus: 200,
     },
     {
       name: "User Relay Ribo (EU)",
-      url: "https://ribo.eu.nostria.app",
+      url: "https://ribo.nostria.app",
+      method: "GET",
+      expectedStatus: 200,
+    },
+    {
+      name: "User Relay Rilo ('US')",
+      url: "https://rilo.nostria.app",
       method: "GET",
       expectedStatus: 200,
     },
@@ -76,39 +70,45 @@ const config = {
     //   method: "GET",
     //   expectedStatus: 200,
     // },
-    {
-      name: "Media Server Mibo (EU)",
-      url: "https://mibo.eu.nostria.app",
-      method: "GET",
-      expectedStatus: 200,
-    },
+    // {
+    //   name: "Media Server Mibo (EU)",
+    //   url: "https://mibo.eu.nostria.app",
+    //   method: "GET",
+    //   expectedStatus: 200,
+    // },
     // {
     //   name: "Media Server Milo (EU)",
     //   url: "https://milo.eu.nostria.app",
     //   method: "GET",
     //   expectedStatus: 200,
     // },
+    // {
+    //   name: "User Relay Ribo (AF)",
+    //   url: "https://ribo.af.nostria.app",
+    //   method: "GET",
+    //   expectedStatus: 200,
+    // },
+    // {
+    //   name: "Media Server Mibo (AF)",
+    //   url: "https://mibo.af.nostria.app",
+    //   method: "GET",
+    //   expectedStatus: 200,
+    // },
+    // {
+    //   name: "User Relay Ribo (US)",
+    //   url: "https://ribo.us.nostria.app",
+    //   method: "GET",
+    //   expectedStatus: 200,
+    // },
     {
-      name: "User Relay Ribo (AF)",
-      url: "https://ribo.af.nostria.app",
+      name: "Media Server Mibo (EU)",
+      url: "https://mibo.nostria.app",
       method: "GET",
       expectedStatus: 200,
     },
     {
-      name: "Media Server Mibo (AF)",
-      url: "https://mibo.af.nostria.app",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
-      name: "User Relay Ribo (US)",
-      url: "https://ribo.us.nostria.app",
-      method: "GET",
-      expectedStatus: 200,
-    },
-    {
-      name: "Media Server Mibo (US)",
-      url: "https://mibo.us.nostria.app",
+      name: "Media Server Milo ('US')",
+      url: "https://milo.nostria.app",
       method: "GET",
       expectedStatus: 200,
     },
@@ -137,14 +137,14 @@ const config = {
   azure: {
     // Enable Azure-specific optimizations
     isAzureWebApp: !!process.env.WEBSITES_ENABLE_APP_SERVICE_STORAGE,
-    
+
     // Health check configuration
     healthCheck: {
       enabled: true,
       path: '/health',
       timeout: 10000, // 10 seconds
     },
-    
+
     // Logging configuration for Azure
     logging: {
       level: process.env.LOG_LEVEL || 'info',
